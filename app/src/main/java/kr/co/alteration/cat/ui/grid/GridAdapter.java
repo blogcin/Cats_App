@@ -1,6 +1,7 @@
 package kr.co.alteration.cat.ui.grid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import kr.co.alteration.cat.R;
+import kr.co.alteration.cat.client.ClientConstants;
+import kr.co.alteration.cat.ui.AccessListActivity;
 
 /**
  * Created by blogc on 2016-09-24.
@@ -23,11 +26,13 @@ public class GridAdapter extends BaseAdapter {
     private final LayoutInflater inflater;
     private Calendar mCal;
     private Context context;
+    private String date;
 
-    public GridAdapter(Context context, List<String> list) {
+    public GridAdapter(Context context, List<String> list, String date) {
         this.list = list;
         this.context = context;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.date = date;
     }
 
     @Override
@@ -55,7 +60,9 @@ public class GridAdapter extends BaseAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, String.valueOf(getItem(i)), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, AccessListActivity.class);
+                    intent.putExtra(ClientConstants.DATA_DATE, date + "/" + getItem(i));
+                    context.startActivity(intent);
                 }
             });
             viewHolder = new ViewHolder();

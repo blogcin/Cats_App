@@ -23,13 +23,15 @@
             android:theme="@style/AlarmTheme" />
         <activity android:name=".ui.CalendarActivity" />
         <activity android:name=".ui.AccessListActivity"></activity>
+
+        <receiver android:name=".alarm.NotiManager">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
-    <receiver android:name=".alarm.NotiManager">
-        <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED" />
-        </intent-filter>
-    </receiver>
+
 
 
 </manifest>

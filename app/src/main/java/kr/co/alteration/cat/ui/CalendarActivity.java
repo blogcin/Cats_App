@@ -21,6 +21,17 @@ public class CalendarActivity extends AppCompatActivity {
     private GridView gridView;
     private Calendar mCal;
 
+    private void addDays() {
+        dayList = new ArrayList<String>();
+        dayList.add("일");
+        dayList.add("월");
+        dayList.add("화");
+        dayList.add("수");
+        dayList.add("목");
+        dayList.add("금");
+        dayList.add("토");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,16 +47,9 @@ public class CalendarActivity extends AppCompatActivity {
         final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
         final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
 
-        tvDate.setText(curYearFormat.format(date) + "/" + curMonthFormat.format(date));
+        addDays();
 
-        dayList = new ArrayList<String>();
-        dayList.add("일");
-        dayList.add("월");
-        dayList.add("화");
-        dayList.add("수");
-        dayList.add("목");
-        dayList.add("금");
-        dayList.add("토");
+        tvDate.setText(curYearFormat.format(date) + "/" + curMonthFormat.format(date));
 
         mCal = Calendar.getInstance();
         mCal.set(Integer.parseInt(curYearFormat.format(date)), Integer.parseInt(curMonthFormat.format(date)) - 1, 1);
@@ -60,7 +64,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         setCalendarDate(mCal.get(Calendar.MONTH) + 1);
 
-        gridAdapter = new GridAdapter(getApplicationContext(), dayList);
+        gridAdapter = new GridAdapter(getApplicationContext(), dayList, tvDate.getText().toString());
         gridView.setAdapter(gridAdapter);
     }
 
