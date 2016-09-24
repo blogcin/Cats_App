@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Cat</string>
+    <string name="communicate_with_server">Communicating with the server.</string>
+    <string name="turn_alarm">Turn Off Notification</string>
+    <string name="history">History</string>
+    <string name="set_notification">Notification Settings</string>
+</resources>
