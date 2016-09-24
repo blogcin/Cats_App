@@ -19,7 +19,7 @@ public class HistoryAnalyzer {
         if (el != null) {
             try {
                 basedDate = el.getString(ClientConstants.DATA_DATE);
-                basedDate = el.getString(ClientConstants.DATA_TYPE);
+                basedType = el.getString(ClientConstants.DATA_TYPE);
             } catch (JSONException e) {
                 Log.d(TAG, "Failed to analyze history");
                 e.printStackTrace();
