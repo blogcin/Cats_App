@@ -20,18 +20,28 @@
         </activity>
         <activity
             android:name=".alarm.AlarmActivity"
+            android:excludeFromRecents="true"
+            android:taskAffinity="kr.co.alteration.cat.popup"
             android:theme="@style/AlarmTheme" />
         <activity android:name=".ui.CalendarActivity" />
-        <activity android:name=".ui.AccessListActivity"></activity>
+        <activity android:name=".ui.AccessListActivity" />
 
-        <receiver android:name=".alarm.NotiManager">
+        <receiver
+            android:enabled="true"
+            android:name=".alarm.NotiManager">
+
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".client.ClientService">
+            <intent-filter>
+                <action android:name="kr.co.alteration.client.startClientService"/>
+            </intent-filter>
+        </service>
+
+        <activity android:name=".ui.NotificationSettingActivity"></activity>
     </application>
-
-
-
 
 </manifest>

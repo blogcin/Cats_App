@@ -42,6 +42,6 @@ public class AlarmActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alarm);
 
         TextView textView = (TextView) findViewById(R.id.alarm_message);
-        textView.setText("고양이 기모띠");
+        textView.setText("고양이가 설정한 조건에 충족하지 않습니다.");
     }
 }

@@ -1,77 +1,214 @@
 package kr.co.alteration.cat.ui;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import kr.co.alteration.cat.R;
+import kr.co.alteration.cat.client.Client;
+import kr.co.alteration.cat.client.DBManager;
+import kr.co.alteration.cat.client.HistoryAnalyzer;
+import kr.co.alteration.cat.client.HistoryParser;
 import kr.co.alteration.cat.ui.grid.GridAdapter;
+import kr.co.alteration.cat.ui.list.ListAdapter;
+import kr.co.alteration.cat.ui.list.ListItem;
 
 public class CalendarActivity extends AppCompatActivity {
-    private TextView tvDate;
-    private GridAdapter gridAdapter;
-    private ArrayList<String> dayList;
-    private GridView gridView;
-    private Calendar mCal;
+    private final String TAG = "CalendarActivity";
+    private Button btnPrevious = null;
+    private Button btnNext = null;
+    private Button btnDatePicker = null;
 
-    private void addDays() {
-        dayList = new ArrayList<String>();
-        dayList.add("일");
-        dayList.add("월");
-        dayList.add("화");
-        dayList.add("수");
-        dayList.add("목");
-        dayList.add("금");
-        dayList.add("토");
-    }
+    private TextView tv_recent_pages = null;
+    private ListView listviewDatas = null;
+    private ListAdapter listAdapter = null;
+
+    private int indexOfPage = 0;
+    private final int PAGES = 7;
+
+    private DBManager dbManager = null;
+    private DBManager dbWriter = null;
+
+    private ArrayList<String> dates;
+
+    private ArrayList<ListItem> listItemArrayList;
+
+    private TextView tv_times_sum;
+    private TextView tv_dates;
+
+    private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            dates = new ArrayList<>();
+            dbManager = new DBManager(CalendarActivity.this, "History.db", null, 1);
+            dbManager.getReadableDatabase();
+
+            Calendar cal = Calendar.getInstance();
+
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, monthOfYear+1);
+            cal.set(Calendar.DATE, dayOfMonth);
+
+            for(int i = 1; i <= 7; i++) {
+                dates.add(String.format(Locale.KOREAN, "%04d/%02d/%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE)));
+                cal.add(Calendar.DATE, 1);
+            }
+
+            listItemArrayList = new ArrayList<>();
+
+            int times = 0;
+
+            String dbResult = dbManager.get(dates.get(0));
+
+            if (dbResult != null) {
+                for(String item : dbResult.split(" ")) {
+                    times += 1;
+                    ListItem listItem = new ListItem(item);
+                    listItemArrayList.add(listItem);
+                }
+            }
+
+            tv_times_sum.setText("총합 : " + times + "번");
+            listAdapter.setListViewItemList(listItemArrayList);
+            listAdapter.notifyDataSetChanged();
+            indexOfPage = 1;
+            tv_recent_pages.setText(indexOfPage + "/" + PAGES);
+            tv_dates.setText(dates.get(0));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
-        tvDate = (TextView) findViewById(R.id.tv_date);
-        gridView = (GridView) findViewById(R.id.gridview);
+        Client client = new Client(this);
+        JSONObject result = client.getResult();
 
-        long now = System.currentTimeMillis();
-        final Date date = new Date(now);
+        dbWriter = new DBManager(this, "History.db", null, 1);
+        dbWriter.clear();
+        dbWriter.getWritableDatabase();
 
-        final SimpleDateFormat curYearFormat = new SimpleDateFormat("yyyy", Locale.KOREA);
-        final SimpleDateFormat curMonthFormat = new SimpleDateFormat("MM", Locale.KOREA);
-        final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
+        try {
+            HistoryParser historyParser = new HistoryParser(result);
+            HistoryAnalyzer historyAnalyzer = null;
 
-        addDays();
+            historyAnalyzer = new HistoryAnalyzer(historyParser.getIndexofHistory(0), this);
 
-        tvDate.setText(curYearFormat.format(date) + "/" + curMonthFormat.format(date));
-
-        mCal = Calendar.getInstance();
-        mCal.set(Integer.parseInt(curYearFormat.format(date)), Integer.parseInt(curMonthFormat.format(date)) - 1, 1);
-
-        int dayNum = mCal.get(Calendar.DAY_OF_WEEK);
-
-        //1일 - 요일 매칭 시키기 위해 공백 add
-
-        for (int i = 1; i < dayNum; i++) {
-            dayList.add("");
+            for(int i = 1; i < historyParser.length(); i++) {
+                historyAnalyzer.addHistory(historyParser.getIndexofHistory(i));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        setCalendarDate(mCal.get(Calendar.MONTH) + 1);
+        btnPrevious = (Button) findViewById(R.id.btn_previous);
+        btnNext = (Button) findViewById(R.id.btn_next);
+        btnDatePicker = (Button) findViewById(R.id.btn_date_picker);
+        tv_recent_pages = (TextView)findViewById(R.id.tv_recent_pages);
+        tv_times_sum = (TextView)findViewById(R.id.tv_times_sum);
+        tv_dates = (TextView)findViewById(R.id.tv_date);
 
-        gridAdapter = new GridAdapter(getApplicationContext(), dayList, tvDate.getText().toString());
-        gridView.setAdapter(gridAdapter);
+        listviewDatas = (ListView)findViewById(R.id.listview_access_list);
+        listAdapter = new ListAdapter();
+
+        listviewDatas.setAdapter(listAdapter);
+
+        btnPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (indexOfPage > 1) {
+                    indexOfPage -= 1;
+                    tv_recent_pages.setText(indexOfPage + "/" + PAGES);
+
+                    listItemArrayList = new ArrayList<>();
+
+                    String dbResult = dbManager.get(dates.get(indexOfPage-1));
+
+                    int times = 0;
+
+                    if (dbResult != null) {
+                        for(String item : dbResult.split(" ")) {
+                            times += 1;
+                            ListItem listItem = new ListItem(item);
+                            listItemArrayList.add(listItem);
+                        }
+                    }
+
+                    tv_times_sum.setText("총합 : " + times + "번");
+                    listAdapter.setListViewItemList(listItemArrayList);
+                    listAdapter.notifyDataSetChanged();
+                    tv_dates.setText(dates.get(indexOfPage-1));
+                }
+
+            }
+        });
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (indexOfPage > 0 && indexOfPage < PAGES) {
+                    indexOfPage += 1;
+                    tv_recent_pages.setText(indexOfPage + "/" + PAGES);
+
+                    listItemArrayList = new ArrayList<>();
+
+                    String dbResult = dbManager.get(dates.get(indexOfPage-1));
+
+                    int times = 0;
+
+                    if (dbResult != null) {
+                        for(String item : dbResult.split(" ")) {
+                            times += 1;
+                            ListItem listItem = new ListItem(item);
+                            listItemArrayList.add(listItem);
+                        }
+                    }
+
+                    tv_times_sum.setText("총합 : " + times + "번");
+                    tv_dates.setText(dates.get(indexOfPage-1));
+                    listAdapter.setListViewItemList(listItemArrayList);
+                    listAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
+        btnDatePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GregorianCalendar calendar = new GregorianCalendar();
+
+                new DatePickerDialog(CalendarActivity.this, dateSetListener,
+                        calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+
+
+            }
+        });
+
+
     }
 
-    private void setCalendarDate(int month) {
-        mCal.set(Calendar.MONTH, month - 1);
-        for (int i = 0; i < mCal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-            dayList.add("" + (i + 1));
-        }
-    }
+
 }

@@ -51,7 +51,7 @@ public class GridAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, final ViewGroup viewGroup) {
         ViewHolder viewHolder = null;
 
         if (view == null) {
@@ -60,11 +60,15 @@ public class GridAdapter extends BaseAdapter {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    view.setBackgroundColor(ContextCompat.getColor(context, R.color.color_21a4ff));
                     Intent intent = new Intent(context, AccessListActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(ClientConstants.DATA_DATE, date + "/" + getItem(i));
+                    view.setBackgroundColor(ContextCompat.getColor(context, R.color.color_ffffff));
                     context.startActivity(intent);
                 }
             });
+
             viewHolder = new ViewHolder();
 
             viewHolder.tvItemGridView = (TextView) view.findViewById(R.id.tv_item_gridview);

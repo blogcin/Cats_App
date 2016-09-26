@@ -4,4 +4,13 @@
     <string name="turn_alarm">Turn Off Notification</string>
     <string name="history">History</string>
     <string name="set_notification">Notification Settings</string>
+    <string name="mon">Monday</string>
+    <string name="tues">Tuesday</string>
+    <string name="wednes">Wednesday</string>
+    <string name="thurs">Thursday</string>
+    <string name="fri">Friday</string>
+    <string name="satur">Saturday</string>
+    <string name="sun">Sunday</string>
+    <string name="use_time">Time</string>
+    <string name="times">Times</string>
 </resources>

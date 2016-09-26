@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import kr.co.alteration.cat.MainActivity;
+import kr.co.alteration.cat.client.ClientService;
 
 /**
  * Created by blogc on 2016-09-24.
@@ -19,12 +20,10 @@ public class NotiManager extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            Intent Intent = new Intent(context, MainActivity.class);
-            PendingIntent pIntent = PendingIntent.getActivity(context, 0, Intent, 0);
 
-            alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 10, pIntent);
-
-            Log.d(TAG, "OK, Alarm is registered");
+            Intent Intent = new Intent(context, ClientService.class);
+            PendingIntent pIntent = PendingIntent.getService(context, 0, Intent, 0);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 3 * 60 * 1000, pIntent);
         }
     }
 }

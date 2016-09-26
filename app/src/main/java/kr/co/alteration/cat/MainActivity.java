@@ -10,7 +10,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import kr.co.alteration.cat.client.Client;
+import kr.co.alteration.cat.client.ClientService;
 import kr.co.alteration.cat.ui.CalendarActivity;
+import kr.co.alteration.cat.ui.NotificationSettingActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static boolean alarmStatus = false;
@@ -60,11 +63,20 @@ public class MainActivity extends AppCompatActivity {
                     editor.putBoolean("alarmDisabled", false);
                     alarmStatus = false;
                 }
+
+                editor.commit();
             }
         });
 
         btnHistory = (Button) findViewById(R.id.btn_calendar);
         btnNotfiSetting = (Button) findViewById(R.id.btn_notification_menu);
+
+        btnNotfiSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, NotificationSettingActivity.class));
+            }
+        });
 
         btnHistory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,5 +92,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+
     }
 }

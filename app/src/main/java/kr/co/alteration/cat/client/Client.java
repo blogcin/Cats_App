@@ -9,7 +9,10 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.Arrays;
 
 /**
  * Created by blogc on 2016-09-23.
@@ -27,12 +30,14 @@ public class Client {
         }
     }
 
-    public void start() {
+    public JSONObject getResult() {
         receiveThread = new ReceiveThread();
         receiveThread.start();
-    }
-
-    public JSONObject getResult() {
+        try {
+            receiveThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         JSONObject result = receiveThread.getResult();
 
         if (result != null) {
@@ -49,7 +54,9 @@ public class Client {
         @Override
         public void run() {
             try {
-                socket = new Socket(ClientConstants.SERVER_IP, Integer.parseInt(ClientConstants.SERVER_PORT));
+                SocketAddress socketAddress = new InetSocketAddress(ClientConstants.SERVER_IP, Integer.parseInt(ClientConstants.SERVER_PORT));
+                socket = new Socket();
+                socket.connect(socketAddress);
             } catch (IOException e) {
                 Log.d(TAG, "Socket Open Failed");
                 e.printStackTrace();
@@ -71,8 +78,9 @@ public class Client {
             }
 
 
+
             try {
-                bufferedInputStream.read(header);
+                Log.d(TAG, String.valueOf(bufferedInputStream.read(header, 0, ClientConstants.HEADER_SIZE)));
             } catch (IOException e) {
                 Log.d(TAG, "Failed to read Header");
                 e.printStackTrace();
@@ -89,11 +97,24 @@ public class Client {
             int dataSize = 0;
 
             try {
-                dataSize = Integer.parseInt(new String(header, "UTF-8").trim().replace(" ", ""));
+                dataSize = Integer.parseInt(new String(header, "UTF-8").trim().replace(" ", "").trim());
             } catch (UnsupportedEncodingException e) {
                 Log.d(TAG, "Unsupported Character found");
                 e.printStackTrace();
 
+                try {
+                    socket.shutdownInput();
+                    socket.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+                return;
+            } catch (NumberFormatException e) {
+                Log.d(TAG, "NumberFormatException found");
+                e.printStackTrace();
+
+                    Log.d(TAG, Arrays.toString(header));
                 try {
                     socket.shutdownInput();
                     socket.close();
@@ -155,6 +176,7 @@ public class Client {
             }
 
             try {
+                Log.d(TAG, "Client Ends");
                 socket.shutdownInput();
                 socket.close();
             } catch (IOException e) {

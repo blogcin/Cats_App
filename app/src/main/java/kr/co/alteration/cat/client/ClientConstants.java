@@ -5,10 +5,15 @@ package kr.co.alteration.cat.client;
  */
 public class ClientConstants {
 
-    public static final String SERVER_IP = "127.0.0.1";
-    public static final String SERVER_PORT = "9999";
+    public static final String SERVER_IP = "192.168.0.2";
+    public static final String SERVER_PORT = "50007";
 
     public static final int HEADER_SIZE = 64;
+
+    public static final String MIN = "min";
+    public static final String HOUR = "hour";
+    public static final String SEC = "sec";
+
 
     public static final String DATA_DATE = "date";
     public static final String DATA_TYPE = "type";
