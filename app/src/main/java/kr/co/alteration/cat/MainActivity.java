@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
-import kr.co.alteration.cat.client.Client;
-import kr.co.alteration.cat.client.ClientService;
 import kr.co.alteration.cat.ui.CalendarActivity;
 import kr.co.alteration.cat.ui.NotificationSettingActivity;
 

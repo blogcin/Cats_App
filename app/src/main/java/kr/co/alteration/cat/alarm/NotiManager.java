@@ -5,9 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import kr.co.alteration.cat.MainActivity;
 import kr.co.alteration.cat.client.ClientService;
 
 /**

@@ -24,7 +24,6 @@
             android:taskAffinity="kr.co.alteration.cat.popup"
             android:theme="@style/AlarmTheme" />
         <activity android:name=".ui.CalendarActivity" />
-        <activity android:name=".ui.AccessListActivity" />
 
         <receiver
             android:enabled="true"

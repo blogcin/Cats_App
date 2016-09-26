@@ -23,7 +23,6 @@ import java.util.Locale;
 import kr.co.alteration.cat.MainActivity;
 import kr.co.alteration.cat.R;
 import kr.co.alteration.cat.alarm.AlarmActivity;
-import kr.co.alteration.cat.ui.list.ListItem;
 
 /**
  * Created by blogc on 2016-09-24.

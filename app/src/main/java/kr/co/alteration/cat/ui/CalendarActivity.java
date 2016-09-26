@@ -3,24 +3,17 @@ package kr.co.alteration.cat.ui;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -29,7 +22,6 @@ import kr.co.alteration.cat.client.Client;
 import kr.co.alteration.cat.client.DBManager;
 import kr.co.alteration.cat.client.HistoryAnalyzer;
 import kr.co.alteration.cat.client.HistoryParser;
-import kr.co.alteration.cat.ui.grid.GridAdapter;
 import kr.co.alteration.cat.ui.list.ListAdapter;
 import kr.co.alteration.cat.ui.list.ListItem;
 
